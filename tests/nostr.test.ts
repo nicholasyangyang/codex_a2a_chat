@@ -89,3 +89,22 @@ test('updateContacts allows new sender after update', () => {
   ;(recipient.client as any).handleEvent(giftWrap)
   expect(recipient.messages).toHaveLength(1)
 })
+
+test('send with zero relays returns ok false', async () => {
+  const { client } = makeClient()
+  const result = await client.send(makeClient().npub, 'hello')
+  expect(result.ok).toBe(false)
+  expect(result.sent).toBe(0)
+  expect(result.total).toBe(0)
+})
+
+test('unwrapGiftWrap throws when gift wrap p tag does not match recipient', () => {
+  const sender = makeClient()
+  const recipient = makeClient([sender.npub])
+  const anotherClient = makeClient()
+
+  // gift wrap addressed to `recipient` from `sender`
+  const giftWrap = sender.client.createGiftWrap(recipient.pubkeyHex, 'secret')
+  // try to unwrap it as `anotherClient` (p tag won't match)
+  expect(() => anotherClient.client.unwrapGiftWrap(giftWrap)).toThrow('Gift wrap not addressed to this client')
+})

@@ -20,7 +20,7 @@ export class NostrClient {
   private relays: Map<string, { relay: Relay | null; connected: boolean }>
   private contacts: Contact[]
   private onMessage: (msg: InboundMessage) => void
-  private seenEventIds = new Set<string>()
+  private seenEventIds = new Map<string, number>()
   private readonly startupTime: number = Math.floor(Date.now() / 1000)
 
   constructor(opts: NostrClientOptions) {
@@ -37,6 +37,7 @@ export class NostrClient {
   }
 
   private async connectRelay(url: string): Promise<void> {
+    const backoff = ((this.relays.get(url) as any)?._backoff) ?? 5000
     try {
       const relay = await Relay.connect(url)
       this.relays.set(url, { relay, connected: true })
@@ -45,16 +46,29 @@ export class NostrClient {
       })
       relay.onclose = () => {
         this.relays.set(url, { relay: null, connected: false })
-        setTimeout(() => this.connectRelay(url), 5000)
+        setTimeout(() => this.connectRelay(url), backoff)
+        this.scheduleBackoffReset(url, backoff)
       }
     } catch {
       this.relays.set(url, { relay: null, connected: false })
+      setTimeout(() => this.connectRelay(url), backoff)
+      this.scheduleBackoffReset(url, backoff)
     }
+  }
+
+  private scheduleBackoffReset(url: string, delay: number): void {
+    const next = Math.min(delay * 2, 5 * 60 * 1000)
+    const entry = this.relays.get(url)
+    if (entry) (entry as any)._backoff = next
   }
 
   private handleEvent(event: any): void {
     if (this.seenEventIds.has(event.id)) return
-    this.seenEventIds.add(event.id)
+    this.seenEventIds.set(event.id, Date.now())
+    const cutoff = Date.now() - 10 * 60 * 1000
+    for (const [id, ts] of this.seenEventIds) {
+      if (ts < cutoff) this.seenEventIds.delete(id)
+    }
     try {
       const { senderNpub, content } = this.unwrapGiftWrap(event)
       if (!isAllowed(this.contacts, senderNpub)) return
@@ -112,6 +126,8 @@ export class NostrClient {
   }
 
   unwrapGiftWrap(giftWrap: any): { senderNpub: string; content: string } {
+    const recipientTag = giftWrap.tags?.find((t: any) => t[0] === 'p')?.[1]
+    if (recipientTag !== this.pubkeyHex) throw new Error('Gift wrap not addressed to this client')
     const convKey1 = nip44.getConversationKey(this.privkey, giftWrap.pubkey)
     const seal = JSON.parse(nip44.decrypt(giftWrap.content, convKey1))
     const convKey2 = nip44.getConversationKey(this.privkey, seal.pubkey)
