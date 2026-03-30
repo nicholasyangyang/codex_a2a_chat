@@ -102,6 +102,13 @@ export class NostrClient {
     return [...this.relays.entries()].map(([url, { connected }]) => ({ url, connected }))
   }
 
+  /** Close all active relay connections. */
+  close(): void {
+    for (const { relay } of this.relays.values()) {
+      try { relay?.close() } catch { /* ignore */ }
+    }
+  }
+
   createGiftWrap(toPubkeyHex: string, content: string): any {
     const rumor = {
       kind: 14,

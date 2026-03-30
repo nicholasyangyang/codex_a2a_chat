@@ -7,6 +7,8 @@ import { loadOrGenerateKey } from './keys.ts'
 import { loadContacts, addContact } from './contacts.ts'
 import { NostrClient } from './nostr.ts'
 import { findCodexSocketPath, injectMessage } from './codex-inject.ts'
+import { connect as netConnect } from 'net'
+import { decodeNpub } from './keys.ts'
 import type { InboundMessage } from './types.ts'
 
 // --- Parse CLI args ---
@@ -21,9 +23,22 @@ const pidIdx = process.argv.indexOf('--codex-pid')
 const codexPid = pidIdx !== -1 && process.argv[pidIdx + 1]
   ? parseInt(process.argv[pidIdx + 1], 10)
   : undefined
+if (pidIdx !== -1 && (codexPid === undefined || !Number.isFinite(codexPid) || codexPid <= 0)) {
+  process.stderr.write(`Error: --codex-pid must be a positive integer, got "${process.argv[pidIdx + 1]}"\n`)
+  process.exit(1);
+}
 
 // Socket path: --codex-pid → process.ppid
 const socketPath = findCodexSocketPath(codexPid)
+
+/** Lightweight reachability check with a short 2s timeout. */
+async function pingSocket(path: string): Promise<boolean> {
+  return new Promise(resolve => {
+    const t = setTimeout(() => { socket.destroy(); resolve(false) }, 2000)
+    const socket = netConnect(path, () => { clearTimeout(t); socket.destroy(); resolve(true) })
+    socket.on('error', () => { clearTimeout(t); resolve(false) })
+  })
+}
 
 // --- Load .env from workdir ---
 const envPath = join(workdir, '.env')
@@ -38,6 +53,7 @@ const relayUrls = (process.env.NOSTR_RELAYS ?? 'wss://relay.damus.io,wss://relay
   .split(',').map(s => s.trim()).filter(Boolean)
 
 // --- Bootstrap ---
+const MAX_QUEUE = 1000
 const keypair = loadOrGenerateKey(workdir)
 let contacts = loadContacts(workdir)
 const messageQueue: InboundMessage[] = []
@@ -48,6 +64,7 @@ const nostr = new NostrClient({
   relayUrls,
   contacts,
   onMessage: async (msg) => {
+    if (messageQueue.length >= MAX_QUEUE) messageQueue.shift()
     messageQueue.push(msg)
     // Attempt socket injection; silently skip if socket unavailable
     const text = `[P2P from ${msg.from_name ?? msg.from_npub}]\n${msg.content}`
@@ -124,6 +141,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
     case 'send_message': {
       if (!args.to_npub || typeof args.to_npub !== 'string') return text('Error: to_npub is required.')
       if (!args.content || typeof args.content !== 'string') return text('Error: content is required.')
+      try { decodeNpub(args.to_npub) } catch { return text(`Error: "${args.to_npub}" is not a valid npub (bech32 format expected).`) }
       const result = await nostr.send(args.to_npub, args.content)
       if (!result.ok) return text(`Failed to send: no relays available (${result.total} configured, 0 accepted).`)
       return text(`Message sent (${result.sent}/${result.total} relays).`)
@@ -148,13 +166,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
       return text(keypair.npub)
 
     case 'status': {
-      let socketReachable = false
-      try {
-        await injectMessage(socketPath, '')
-        socketReachable = true
-      } catch {
-        socketReachable = false
-      }
+      const socketReachable = await pingSocket(socketPath)
       return text(JSON.stringify({
         npub: keypair.npub,
         workdir,
@@ -172,3 +184,6 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
 
 const transport = new StdioServerTransport()
 await server.connect(transport)
+
+process.on('SIGINT', () => { nostr.close(); process.exit(0) })
+process.on('SIGTERM', () => { nostr.close(); process.exit(0) })
