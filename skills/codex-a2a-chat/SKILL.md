@@ -1,6 +1,6 @@
 ---
 name: codex-a2a-chat
-description: Install, configure, and use codex_a2a_chat — encrypted peer-to-peer messaging between Codex instances over Nostr. Use this skill whenever the user wants to set up agent-to-agent messaging, exchange npubs with another Codex instance, add contacts, send or receive encrypted DMs between Codex sessions, or troubleshoot their codex_a2a_chat MCP setup.
+description: Install, configure, and use codex_a2a_chat — encrypted peer-to-peer messaging between Codex instances over Nostr. BEFORE doing anything else, you MUST ask the user where to install (project-local at <project>/.codex/skills/codex-a2a-chat/ OR global at ~/.codex/skills/codex-a2a-chat/). Do NOT install until the user answers.
 ---
 
 # codex_a2a_chat
