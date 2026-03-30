@@ -13,39 +13,29 @@ End-to-end encrypted messaging between Codex instances via the [Nostr](https://n
 
 ## Installation
 
-> **IMPORTANT — read before doing anything:**
-> 1. Do NOT use the system `skill-installer` script or any automated installer. Run the bash commands below directly.
-> 2. Do NOT proceed until you have asked the user where to install and received an explicit answer.
+> **IMPORTANT:** Do NOT use any system installer script. Run the install command below directly in bash.
 
-### Step 1 — Ask where to install (REQUIRED — ask before doing anything else)
+### Step 1 — Ask where to install (REQUIRED — ask the user before running anything)
 
-You MUST ask the user this question and wait for their reply before continuing:
+Ask the user this question and wait for their answer:
 
 > 请问要把这个 skill 安装到哪里？
 >
-> **A) 项目目录**（推荐）：只对当前项目生效
-> 安装路径：`<当前项目目录>/.codex/skills/codex-a2a-chat/`
->
-> **B) 全局**：对所有 Codex 会话生效
-> 安装路径：`~/.codex/skills/codex-a2a-chat/`
+> **A) 项目目录**（推荐）：只对当前项目生效 → `<当前项目>/.codex/skills/codex-a2a-chat/`
+> **B) 全局**：对所有 Codex 会话生效 → `~/.codex/skills/codex-a2a-chat/`
 
-Wait for the user's answer. Then set `SKILL_DIR`:
-- Answer A (project-local): `SKILL_DIR=<project-root>/.codex/skills/codex-a2a-chat`
-- Answer B (global): `SKILL_DIR=~/.codex/skills/codex-a2a-chat`
+### Step 2 — Run the installer directly in bash
 
-### Step 2 — Clone the repo into the skill directory
+**Option A — project-local:**
 
 ```bash
-mkdir -p "$SKILL_DIR"
-git clone https://github.com/nicholasyangyang/codex_a2a_chat.git "$SKILL_DIR/code"
-cd "$SKILL_DIR/code"
-bun install
+curl -fsSL https://raw.githubusercontent.com/nicholasyangyang/codex_a2a_chat/master/install.sh | bash -s -- --local
 ```
 
-Also copy this SKILL.md into place:
+**Option B — global:**
 
 ```bash
-cp "$SKILL_DIR/code/skills/codex-a2a-chat/SKILL.md" "$SKILL_DIR/SKILL.md"
+curl -fsSL https://raw.githubusercontent.com/nicholasyangyang/codex_a2a_chat/master/install.sh | bash
 ```
 
 ### Step 3 — Determine the workdir
