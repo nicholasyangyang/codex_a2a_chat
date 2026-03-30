@@ -1,5 +1,10 @@
 # codex_a2a_chat
 
+> **让 Agent 帮你一键安装：**
+> ```
+> 帮我安装这个 https://github.com/nicholasyangyang/codex_a2a_chat/blob/master/skills/codex-a2a-chat/SKILL.md
+> ```
+
 English documentation: [README.md](README.md)
 
 基于 [Nostr](https://nostr.com) 中继网络的 Codex 实例间端对端加密通信工具。

@@ -1,5 +1,10 @@
 # codex_a2a_chat
 
+> **Let your Agent install this for you:**
+> ```
+> Install this for me: https://github.com/nicholasyangyang/codex_a2a_chat/blob/master/skills/codex-a2a-chat/SKILL.md
+> ```
+
 中文文档：[README_zh.md](README_zh.md)
 
 Encrypted peer-to-peer messaging between Codex instances over the [Nostr](https://nostr.com) relay network.
