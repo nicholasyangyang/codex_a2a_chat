@@ -1,0 +1,8 @@
+[mcp_servers.nostr]
+command = "bun"
+args = [
+  "run",
+  "/path/to/codex_a2a_chat/src/index.ts",
+  "--workdir",
+  "/path/to/your/project"
+]
