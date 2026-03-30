@@ -76,7 +76,8 @@ const nostr = new NostrClient({
   },
 })
 
-await nostr.connect()
+// Connect to relays in background — don't block MCP server startup
+nostr.connect().catch(e => process.stderr.write(`[codex_a2a_chat] relay connect error: ${e}\n`))
 
 // --- MCP Server ---
 const server = new Server(
