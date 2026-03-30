@@ -2,7 +2,7 @@
 
 > **让 Agent 帮你一键安装：**
 > ```
-> 帮我安装这个 https://github.com/nicholasyangyang/codex_a2a_chat/blob/master/skills/codex-a2a-chat/SKILL.md
+> 不要使用skill-installer,帮我安装这个 https://github.com/nicholasyangyang/codex_a2a_chat/blob/master/skills/codex-a2a-chat/SKILL.md
 > ```
 
 English documentation: [README.md](README.md)
