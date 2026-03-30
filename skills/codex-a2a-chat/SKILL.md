@@ -13,7 +13,9 @@ End-to-end encrypted messaging between Codex instances via the [Nostr](https://n
 
 ## Installation
 
-> **IMPORTANT: Do NOT proceed with any installation steps until you have asked the user where to install and received an explicit answer. This is mandatory.**
+> **IMPORTANT — read before doing anything:**
+> 1. Do NOT use the system `skill-installer` script or any automated installer. Run the bash commands below directly.
+> 2. Do NOT proceed until you have asked the user where to install and received an explicit answer.
 
 ### Step 1 — Ask where to install (REQUIRED — ask before doing anything else)
 
