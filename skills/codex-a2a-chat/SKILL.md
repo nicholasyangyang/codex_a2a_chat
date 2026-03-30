@@ -22,13 +22,13 @@ You MUST ask the user this question and wait for their reply before continuing:
 > 请问要把这个 skill 安装到哪里？
 >
 > **A) 项目目录**（推荐）：只对当前项目生效
-> 安装路径：`<当前项目目录>/skills/codex-a2a-chat/`
+> 安装路径：`<当前项目目录>/.codex/skills/codex-a2a-chat/`
 >
 > **B) 全局**：对所有 Codex 会话生效
 > 安装路径：`~/.codex/skills/codex-a2a-chat/`
 
 Wait for the user's answer. Then set `SKILL_DIR`:
-- Answer A (project-local): `SKILL_DIR=<project-root>/skills/codex-a2a-chat`
+- Answer A (project-local): `SKILL_DIR=<project-root>/.codex/skills/codex-a2a-chat`
 - Answer B (global): `SKILL_DIR=~/.codex/skills/codex-a2a-chat`
 
 ### Step 2 — Clone the repo into the skill directory
