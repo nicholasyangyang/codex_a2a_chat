@@ -13,17 +13,23 @@ End-to-end encrypted messaging between Codex instances via the [Nostr](https://n
 
 ## Installation
 
-### Step 1 — Ask where to install
+> **IMPORTANT: Do NOT proceed with any installation steps until you have asked the user where to install and received an explicit answer. This is mandatory.**
 
-Ask the user:
+### Step 1 — Ask where to install (REQUIRED — ask before doing anything else)
 
-> 要把这个 skill 装到哪里？
-> - **项目目录**（推荐）：只对当前项目生效，放在 `<当前项目>/skills/codex-a2a-chat/`
-> - **全局**：对所有 Codex 会话生效，放在 `~/.codex/skills/codex-a2a-chat/`
+You MUST ask the user this question and wait for their reply before continuing:
 
-Determine `SKILL_DIR` from the answer:
-- Project-local（默认）: `SKILL_DIR=<project-root>/skills/codex-a2a-chat`
-- Global: `SKILL_DIR=~/.codex/skills/codex-a2a-chat`
+> 请问要把这个 skill 安装到哪里？
+>
+> **A) 项目目录**（推荐）：只对当前项目生效
+> 安装路径：`<当前项目目录>/skills/codex-a2a-chat/`
+>
+> **B) 全局**：对所有 Codex 会话生效
+> 安装路径：`~/.codex/skills/codex-a2a-chat/`
+
+Wait for the user's answer. Then set `SKILL_DIR`:
+- Answer A (project-local): `SKILL_DIR=<project-root>/skills/codex-a2a-chat`
+- Answer B (global): `SKILL_DIR=~/.codex/skills/codex-a2a-chat`
 
 ### Step 2 — Clone the repo into the skill directory
 
