@@ -1,0 +1,16 @@
+{
+  "name": "codex_a2a_chat",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "nostr-tools": "^2.23.3"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  }
+}
